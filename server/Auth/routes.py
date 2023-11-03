@@ -1,7 +1,9 @@
-from server import db
+from server import db, mail, app
 from server.models import User
 from flask_login import current_user, login_user, logout_user
 from flask import request, jsonify, Blueprint
+from flask_mail import Message
+from server.utils.utils import login_required_fop
 
 
 auth_bp = Blueprint('auth', 'auth')
@@ -75,6 +77,60 @@ def register():
                        statusCode=200), 200
 
 
+@auth_bp.route('/request_reset_password', methods=['GET', 'POST'])
+def request_reset_password():
+    current_id = -1
+    if request.method == 'GET' and current_user.is_authenticated:
+        current_id = current_user.id
+    if request.method == 'POST':
+        data = request.json
+        current_email = data['current_email']
+        current_user_local = User.query.filter(User.email == current_email).first()
+        if current_user_local:
+            current_id = current_user_local.id
 
+    if current_id != -1:
+        user = User.query.filter(User.id == current_id).first()
+        token = user.get_reset_password_token()
+        msg = Message(
+            'Request',
+            sender=app.config['MAIL_USERNAME'],
+            recipients=user.email.split()
+        )
+        msg.body = f'http://localhost:3000/reset_password/{token}'
+        mail.send(msg)
+        return jsonify(isError=False,
+                       message="Success",
+                       statusCode=200), 200
+    return jsonify(isError=True,
+                   message="User doesn't exist or you use wrong method",
+                   statusCode=200), 200
+
+
+@auth_bp.route('/reset_password', methods=['POST'])
+def reset_password():
+    data = request.json
+    token = data['token']
+    new_password = data['new_password']
+    user: User = User.verify_reset_password_token(token)
+    if user:
+        user.set_password(new_password)
+        db.session.commit()
+        return jsonify(isError=False,
+                       message="Password was changed successful",
+                       statusCode=200), 200
+    return jsonify(isError=True,
+                   message="Token has expired or wrong params of request",
+                   statusCode=200), 200
+
+
+@auth_bp.route('/user_info', methods=['GET'])
+@login_required_fop
+def get_user_info():
+    our_user: User = User.query.filter(User.id == current_user.id).first()
+    return jsonify(isError=False,
+                   data={'user': our_user.to_dict()},
+                   message="Password was changed successful",
+                   statusCode=200), 200
 
 

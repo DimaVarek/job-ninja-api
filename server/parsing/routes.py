@@ -1,11 +1,13 @@
 from server import db
 from flask import Blueprint, request, jsonify
 from server.parsing.utils import get_vacancy
+from server.utils.utils import login_required_fop
 
 parsing_bp = Blueprint('parsing', 'parsing')
 
 
 @parsing_bp.route('/', methods=["POST"])
+@login_required_fop
 def parsing():
     try:
         data_url = request.json
