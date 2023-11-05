@@ -26,7 +26,7 @@ def get_positions():
 
 
 @positions_bp.route("/add_position", methods=["POST"])
-@cross_origin
+@cross_origin()
 @login_required_fop
 def add_position():
     owner_id = current_user.id
