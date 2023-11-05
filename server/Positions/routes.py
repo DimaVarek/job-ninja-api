@@ -36,15 +36,15 @@ def add_position():
                                company_image_link=data["company_image_link"],
                                description=data["description"])
     stages = []
-    for i in range(len(data["stages"])):
+    for i in range(len(data["interview_stages"])):
         stage = models.Stage(position_id=position.id,
                              number_in_order=i,
-                             interview_type=data["stages"][i]["interview_type"],
-                             interview_status=data["stages"][i]["interview_status"],
-                             comment=data["stages"][i]["comment"],
-                             date=datetime.datetime.fromtimestamp(int(data["stages"][i]["date"])))
+                             interview_type=data["interview_stages"][i]["interview_type"],
+                             interview_status=data["interview_stages"][i]["interview_status"],
+                             comment=data["interview_stages"][i]["comment"],
+                             date=datetime.datetime.fromtimestamp(int(data["interview_stages"][i]["date"])))
         stages.append(stage)
-    position.stages = stages
+    position.interview_stages = stages
     try:
         db.session.add(position)
         db.session.commit()
@@ -81,18 +81,18 @@ def position(position_id):
             pos.position_name = data["position_name"]
             pos.company_image_link = data['company_image_link']
             pos.description = data['description']
-            for i in pos.stages:
+            for i in pos.interview_stages:
                 db.session.delete(i)
             stages = []
-            for i in range(len(data["stages"])):
+            for i in range(len(data["interview_stages"])):
                 stage = models.Stage(position_id=pos.id,
                                      number_in_order=i,
-                                     interview_type=data["stages"][i]["interview_type"],
-                                     interview_status=data["stages"][i]["interview_status"],
-                                     comment=data["stages"][i]["comment"],
-                                     date=datetime.datetime.fromtimestamp(int(data["stages"][i]["date"])))
+                                     interview_type=data["interview_stages"][i]["interview_type"],
+                                     interview_status=data["interview_stages"][i]["interview_status"],
+                                     comment=data["interview_stages"][i]["comment"],
+                                     date=datetime.datetime.fromtimestamp(int(data["interview_stages"][i]["date"])))
                 stages.append(stage)
-            pos.stages = stages
+            pos.interview_stages = stages
             db.session.commit()
             return jsonify(isError=False,
                            message="Success update",
@@ -105,7 +105,7 @@ def position(position_id):
 
     elif request.method == "DELETE":
         try:
-            for i in pos.stages:
+            for i in pos.interview_stages:
                 db.session.delete(i)
             db.session.delete(pos)
             db.session.commit()

@@ -17,7 +17,7 @@ class Position(db.Model, SerializerMixin):
     __tablename__ = "positions"
 
     serialize_only = ('id', 'position_link', 'company_name', 'position_name', 'company_image_link', 'description',
-                      'created_on', 'updated_on', 'stages')
+                      'created_on', 'updated_on', 'interview_stages')
 
     serialize_rules = ('-stages.position',)
 
@@ -30,7 +30,7 @@ class Position(db.Model, SerializerMixin):
     description = db.Column(db.Text(), default='')
     created_on = db.Column(db.TIMESTAMP(), default=datetime.utcnow)
     updated_on = db.Column(db.TIMESTAMP(), default=datetime.utcnow, onupdate=datetime.utcnow)
-    stages = db.relationship('Stage', backref='position')
+    interview_stages = db.relationship('Stage', backref='position')
 
 
 class Stage(db.Model, SerializerMixin):
