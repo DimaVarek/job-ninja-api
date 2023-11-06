@@ -4,12 +4,16 @@ from flask_login import current_user, login_user, logout_user
 from flask import request, jsonify, Blueprint
 from flask_mail import Message
 from server.utils.utils import login_required_fop
+from flask_cors import CORS, cross_origin
 
 
 auth_bp = Blueprint('auth', 'auth')
 
+CORS(auth_bp, supports_credentials=True)
+
 
 @auth_bp.route('/login', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def login():
     if current_user.is_authenticated:
         return jsonify(isError=True,
@@ -33,6 +37,7 @@ def login():
 
 
 @auth_bp.route('/logout', methods=['GET'])
+@cross_origin(supports_credentials=True)
 def logout():
     logout_user()
     return jsonify(isError=False,
@@ -41,6 +46,7 @@ def logout():
 
 
 @auth_bp.route('/is_auth', methods=['GET'])
+@cross_origin(supports_credentials=True)
 def is_auth():
     if current_user.is_authenticated:
         return jsonify(isError=False,
@@ -54,6 +60,7 @@ def is_auth():
 
 
 @auth_bp.route('/register', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def register():
     if current_user.is_authenticated:
         return jsonify(isError=True,
@@ -78,6 +85,7 @@ def register():
 
 
 @auth_bp.route('/request_reset_password', methods=['GET', 'POST'])
+@cross_origin(supports_credentials=True)
 def request_reset_password():
     current_id = -1
     if request.method == 'GET' and current_user.is_authenticated:
@@ -108,6 +116,7 @@ def request_reset_password():
 
 
 @auth_bp.route('/reset_password', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def reset_password():
     data = request.json
     token = data['token']
@@ -125,6 +134,7 @@ def reset_password():
 
 
 @auth_bp.route('/user_info', methods=['GET'])
+@cross_origin(supports_credentials=True)
 @login_required_fop
 def get_user_info():
     our_user: User = User.query.filter(User.id == current_user.id).first()

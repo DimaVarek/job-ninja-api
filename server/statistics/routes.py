@@ -1,6 +1,7 @@
 from server import db
 from flask_login import current_user
 from flask import jsonify, Blueprint
+from flask_cors import CORS, cross_origin
 from server import models
 from server.utils.utils import login_required_fop
 from server.statistics.utils import get_last_six_months, get_last_four_week, get_last_week
@@ -9,9 +10,11 @@ from server.Enums.Enums import InterviewTypeEnum, InterviewStatusEnum
 
 
 statistic_bp = Blueprint('statistics', 'statistics')
+CORS(statistic_bp, supports_credentials=True)
 
 
 @statistic_bp.route('/last_six_months', methods=['GET'])
+@cross_origin(supports_credentials=True)
 @login_required_fop
 def last_six_months():
     owner_id = current_user.id
@@ -38,6 +41,7 @@ def last_six_months():
 
 
 @statistic_bp.route('/last_four_weeks', methods=['GET'])
+@cross_origin(supports_credentials=True)
 @login_required_fop
 def last_four_weeks():
     owner_id = current_user.id
@@ -60,6 +64,7 @@ def last_four_weeks():
 
 
 @statistic_bp.route('/last_week', methods=['GET'])
+@cross_origin(supports_credentials=True)
 @login_required_fop
 def last_week():
     owner_id = current_user.id
@@ -82,6 +87,7 @@ def last_week():
 
 
 @statistic_bp.route('/total_positive_result_by_each_stage', methods=['GET'])
+@cross_origin(supports_credentials=True)
 @login_required_fop
 def total_positive_result_by_each_stage():
     owner_id = current_user.id

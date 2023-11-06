@@ -3,15 +3,17 @@ import datetime
 from server import db
 from flask_login import current_user
 from flask import request, jsonify, Blueprint
-from flask_cors import cross_origin
+from flask_cors import CORS, cross_origin
 from server import models
 from server.utils.utils import login_required_fop, change_position_date_to_timestamp
 
 
 positions_bp = Blueprint('positions', 'positions')
+CORS(positions_bp, supports_credentials=True)
 
 
 @positions_bp.route("/positions", methods=["GET"])
+@cross_origin(supports_credentials=True)
 @login_required_fop
 def get_positions():
     owner_id = current_user.id
@@ -26,7 +28,7 @@ def get_positions():
 
 
 @positions_bp.route("/add_position", methods=["POST"])
-@cross_origin()
+@cross_origin(supports_credentials=True)
 @login_required_fop
 def add_position():
     owner_id = current_user.id
@@ -62,6 +64,7 @@ def add_position():
 
 
 @positions_bp.route('/position/<position_id>', methods=["GET", "PUT", "DELETE"])
+@cross_origin(supports_credentials=True)
 @login_required_fop
 def position(position_id):
     owner_id = current_user.id

@@ -4,13 +4,15 @@ from flask_login import current_user
 from flask import request, jsonify, Blueprint
 from server import models
 from server.utils.utils import login_required_fop, change_stage_date_to_timestamp
-from sqlalchemy import select
+from flask_cors import CORS, cross_origin
 
 
 calendar_bp = Blueprint('calendar', 'calendar')
+CORS(calendar_bp, supports_credentials=True)
 
 
 @calendar_bp.route('/get_stages_by_period', methods=['GET'])
+@cross_origin(supports_credentials=True)
 @login_required_fop
 def get_stages_by_period():
     try:
