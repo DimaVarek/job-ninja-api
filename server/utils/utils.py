@@ -29,9 +29,9 @@ def change_position_date_to_timestamp(position):
 # change stage after serializing
 def change_stage_date_to_timestamp(stage):
     stage['date'] = datetime.strptime(stage['date'], '%Y-%m-%d %H:%M:%S').timestamp()*1000
-    stage['status'] = InterviewStatusEnum.Default.name if not stage['status'] \
+    stage['status'] = InterviewStatusEnum.Default.name if stage['status'] is None \
         else InterviewStatusEnum(stage['status']).name
-    stage['type'] = InterviewTypeEnum.Default.name if not stage['type'] \
+    stage['type'] = InterviewTypeEnum.Default.name if stage['type'] is None \
         else InterviewTypeEnum(stage['type']).name
     return stage
 
