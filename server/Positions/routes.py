@@ -33,6 +33,7 @@ def get_positions():
 def add_position():
     owner_id = current_user.id
     data = request.json
+    print(data)
     position = models.Position(owner_id=owner_id,
                                position_link=data.get('position_link'),
                                company_name=data.get("company_name"),
@@ -44,17 +45,17 @@ def add_position():
         for i in range(len(data["interview_stages"])):
             stage = models.Stage(position_id=position.id,
                                  number_in_order=i,
-                                 interview_type=data["interview_stages"][i].get("interview_type"),
-                                 interview_status=data["interview_stages"][i].get("interview_status"),
+                                 type=data["interview_stages"][i].get("type"),
+                                 status=data["interview_stages"][i].get("status"),
                                  comment=data["interview_stages"][i].get("comment"),
-                                 date=datetime.datetime.fromtimestamp(int(data["interview_stages"][i].get("date"))))
+                                 date=datetime.datetime.fromtimestamp(int(data["interview_stages"][i].get("date"))//1000))
             stages.append(stage)
         position.interview_stages = stages
     try:
         db.session.add(position)
         db.session.commit()
         return jsonify(isError=False,
-                       data={"id": position.id},
+                       data={"index": position.id},
                        message="Success",
                        statusCode=200), 200
     except:
@@ -80,28 +81,32 @@ def position(position_id):
                        message="Success",
                        statusCode=200), 200
     elif request.method == "PUT":
+        # try:
+        data = request.json
+        pos.position_link = data.get('position_link')
+        pos.company_name = data.get('company_name')
+        pos.position_name = data.get("position_name")
+        pos.company_image_link = data.get('company_image_link')
+        pos.description = data.get('description')
+        for i in pos.interview_stages:
+            db.session.delete(i)
+        stages = []
+        if data.get("interview_stages"):
+            for i in range(len(data["interview_stages"])):
+                stage = models.Stage(position_id=pos.id,
+                                     number_in_order=i,
+                                     type=data["interview_stages"][i].get("type"),
+                                     status=data["interview_stages"][i].get("status"),
+                                     comment=data["interview_stages"][i].get("comment"),
+                                     date=datetime.datetime.fromtimestamp(
+                                         int(data["interview_stages"][i].get("date"))//1000)
+                                     )
+                stages.append(stage)
+            pos.interview_stages = stages
         try:
-            data = request.json
-            pos.position_link = data.get('position_link')
-            pos.company_name = data.get('company_name')
-            pos.position_name = data.get("position_name")
-            pos.company_image_link = data.get('company_image_link')
-            pos.description = data.get('description')
-            for i in pos.interview_stages:
-                db.session.delete(i)
-            stages = []
-            if data.get("interview_stages"):
-                for i in range(len(data["interview_stages"])):
-                    stage = models.Stage(position_id=pos.id,
-                                         number_in_order=i,
-                                         interview_type=data["interview_stages"][i].get("interview_type"),
-                                         interview_status=data["interview_stages"][i].get("interview_status"),
-                                         comment=data["interview_stages"][i].get("comment"),
-                                         date=datetime.datetime.fromtimestamp(int(data["interview_stages"][i].get("date"))))
-                    stages.append(stage)
-                pos.interview_stages = stages
             db.session.commit()
             return jsonify(isError=False,
+                           data={"index": pos.id},
                            message="Success update",
                            statusCode=200), 200
         except:
@@ -111,10 +116,10 @@ def position(position_id):
                            statusCode=200), 200
 
     elif request.method == "DELETE":
+        for i in pos.interview_stages:
+            db.session.delete(i)
+        db.session.delete(pos)
         try:
-            for i in pos.interview_stages:
-                db.session.delete(i)
-            db.session.delete(pos)
             db.session.commit()
             return jsonify(isError=False,
                            message="Success delete",

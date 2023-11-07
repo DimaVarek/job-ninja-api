@@ -36,15 +36,15 @@ class Position(db.Model, SerializerMixin):
 class Stage(db.Model, SerializerMixin):
     __tablename__ = "stages"
 
-    serialize_only = ('id', 'position_id', 'number_in_order', 'interview_type',
-                      'interview_status', 'comment', 'date')
+    serialize_only = ('id', 'position_id', 'number_in_order', 'type',
+                      'status', 'comment', 'date')
     serialize_rules = ('-position',)
 
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     position_id = db.Column(db.Integer(), db.ForeignKey('positions.id'), nullable=False)
     number_in_order = db.Column(db.Integer(), nullable=False)
-    interview_type = db.Column(db.Enum(InterviewTypeEnum))
-    interview_status = db.Column(db.Enum(InterviewStatusEnum))
+    type = db.Column(db.Enum(InterviewTypeEnum), default=InterviewTypeEnum.Default)
+    status = db.Column(db.Enum(InterviewStatusEnum), default=InterviewStatusEnum.Default)
     comment = db.Column(db.Text(), default='')
     date = db.Column(db.TIMESTAMP(), default=datetime.utcnow)
 

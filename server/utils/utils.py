@@ -19,8 +19,8 @@ def login_required_fop(func):
 
 # change position after serializing
 def change_position_date_to_timestamp(position):
-    position['created_on'] = datetime.strptime(position['created_on'], '%Y-%m-%d %H:%M:%S').timestamp()
-    position['updated_on'] = datetime.strptime(position['updated_on'], '%Y-%m-%d %H:%M:%S').timestamp()
+    position['created_on'] = datetime.strptime(position['created_on'], '%Y-%m-%d %H:%M:%S').timestamp()*1000
+    position['updated_on'] = datetime.strptime(position['updated_on'], '%Y-%m-%d %H:%M:%S').timestamp()*1000
     for i in range(len(position['interview_stages'])):
         position['interview_stages'][i] = change_stage_date_to_timestamp(position['interview_stages'][i])
     return position
@@ -28,8 +28,10 @@ def change_position_date_to_timestamp(position):
 
 # change stage after serializing
 def change_stage_date_to_timestamp(stage):
-    stage['date'] = datetime.strptime(stage['date'], '%Y-%m-%d %H:%M:%S').timestamp()
-    stage['interview_status'] = InterviewStatusEnum(stage['interview_status']).name
-    stage['interview_type'] = InterviewTypeEnum(stage['interview_type']).name
+    stage['date'] = datetime.strptime(stage['date'], '%Y-%m-%d %H:%M:%S').timestamp()*1000
+    stage['status'] = InterviewStatusEnum.Default.name if not stage['status'] \
+        else InterviewStatusEnum(stage['status']).name
+    stage['type'] = InterviewTypeEnum.Default.name if not stage['type'] \
+        else InterviewTypeEnum(stage['type']).name
     return stage
 
