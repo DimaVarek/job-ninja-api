@@ -92,7 +92,7 @@ def request_reset_password():
         current_id = current_user.id
     if request.method == 'POST':
         data = request.json
-        current_email = data['current_email']
+        current_email = data['email']
         current_user_local = User.query.filter(User.email == current_email).first()
         if current_user_local:
             current_id = current_user_local.id
