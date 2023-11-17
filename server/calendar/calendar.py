@@ -17,8 +17,8 @@ CORS(calendar_bp, supports_credentials=True)
 def get_stages_by_period():
     try:
         owner_id = current_user.id
-        start_interval = datetime.datetime.fromtimestamp(int(request.args['start_interval']))
-        end_interval = datetime.datetime.fromtimestamp(int(request.args['end_interval']))
+        start_interval = datetime.datetime.fromtimestamp(int(request.args['start_interval'])//1000)
+        end_interval = datetime.datetime.fromtimestamp(int(request.args['end_interval'])//1000)
         stages = db.session.query(models.Stage).join(models.Position).filter(models.Position.owner_id == owner_id,
                                                                              models.Stage.date > start_interval,
                                                                              models.Stage.date < end_interval).all()
