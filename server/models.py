@@ -18,7 +18,7 @@ class Position(db.Model, SerializerMixin):
 
     serialize_only = ('id', 'position_link', 'company_name', 'position_name', 'company_image_link', 'description',
                       'created_on', 'updated_on', 'interview_stages')
-
+    # this part of rules does not work now
     serialize_rules = ('-stages.position',)
 
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
@@ -37,8 +37,10 @@ class Stage(db.Model, SerializerMixin):
     __tablename__ = "stages"
 
     serialize_only = ('id', 'position_id', 'number_in_order', 'type',
-                      'status', 'comment', 'date')
-    serialize_rules = ('-position',)
+                      'status', 'comment', 'date', 'position')
+    serialize_rules = ('-position.id', '-position.owner_id', '-position.position_link',
+                       '-position.company_image_link', '-position.description', '-position.created_on',
+                       '-position.updated_on', '-position.interview_stages')
 
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     position_id = db.Column(db.Integer(), db.ForeignKey('positions.id'), nullable=False)

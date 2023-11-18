@@ -140,7 +140,7 @@ def get_user_info():
     our_user: User = User.query.filter(User.id == current_user.id).first()
     return jsonify(isError=False,
                    data={'user': our_user.to_dict()},
-                   message="Password was changed successful",
+                   message="Success",
                    statusCode=200), 200
 
 
