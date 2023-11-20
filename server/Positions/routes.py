@@ -62,7 +62,7 @@ def add_position():
         db.session.rollback()
         return jsonify(isError=True,
                        message="Something went wrong",
-                       statusCode=200), 200
+                       statusCode=400), 400
 
 
 @positions_bp.route('/position/<position_id>', methods=["GET", "PUT", "DELETE"])
@@ -74,7 +74,7 @@ def position(position_id):
     if pos is None:
         return jsonify(isError=True,
                        message="We dont have this position",
-                       statusCode=200), 200
+                       statusCode=403), 403
     if request.method == "GET":
         return jsonify(isError=False,
                        data=change_position_date_to_timestamp(pos.to_dict()),
@@ -113,7 +113,7 @@ def position(position_id):
             db.session.rollback()
             return jsonify(isError=True,
                            message="Some problems with update",
-                           statusCode=200), 200
+                           statusCode=400), 400
 
     elif request.method == "DELETE":
         for i in pos.interview_stages:
@@ -128,7 +128,7 @@ def position(position_id):
             db.session.rollback()
             return jsonify(isError=True,
                            message="Some problems with delete",
-                           statusCode=200), 200
+                           statusCode=400), 400
 
 
 

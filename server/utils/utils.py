@@ -12,7 +12,7 @@ def login_required_fop(func):
             return func(*args, **kwargs)
         return jsonify(isError=True,
                        message="current user is not authenticated",
-                       statusCode=401), 200
+                       statusCode=401), 401
     wrapper.__name__ = func.__name__
     return wrapper
 
