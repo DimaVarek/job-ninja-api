@@ -56,7 +56,7 @@ def is_auth():
     return jsonify(isError=False,
                    data={"isAuth": False},
                    message="Current user is not authenticated",
-                   statusCode=401), 401
+                   statusCode=200), 200
 
 
 @auth_bp.route('/register', methods=['POST'])
