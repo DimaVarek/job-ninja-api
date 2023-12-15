@@ -35,7 +35,7 @@ def last_six_months():
         })
 
     return jsonify(isError=False,
-                   date=result,
+                   data=result,
                    message="Success",
                    statusCode=200), 200
 
@@ -58,7 +58,7 @@ def last_four_weeks():
         })
 
     return jsonify(isError=False,
-                   date=result,
+                   data=result,
                    message="Success",
                    statusCode=200), 200
 
@@ -81,7 +81,7 @@ def last_week():
         })
 
     return jsonify(isError=False,
-                   date=result,
+                   data=result,
                    message="Success",
                    statusCode=200), 200
 
@@ -91,11 +91,11 @@ def last_week():
 @login_required_fop
 def total_positive_result_by_each_stage():
     owner_id = current_user.id
-    result = db.session.query(models.Stage.interview_type, func.count(models.Stage.interview_type))\
+    result = db.session.query(models.Stage.type, func.count(models.Stage.type))\
         .join(models.Position)\
-        .group_by(models.Stage.interview_type)\
+        .group_by(models.Stage.type)\
         .filter(models.Position.owner_id == owner_id,
-                models.Stage.interview_status == InterviewStatusEnum.Accepted).all()
+                models.Stage.status == InterviewStatusEnum.Accepted).all()
     result = list(map(lambda x: {'stage': x[0].name, 'applications': x[1]}, result))
     all_types = [member.name for member in InterviewTypeEnum]
     for i in result:
@@ -105,5 +105,5 @@ def total_positive_result_by_each_stage():
 
     return jsonify(isError=False,
                    data=result,
-                   message="something goes wrong",
+                   message="Success",
                    statusCode=200), 200
